@@ -1,5 +1,6 @@
 package app;
 
+import controls.Label;
 import io.github.humbleui.jwm.*;
 import io.github.humbleui.jwm.skija.EventFrameSkija;
 import io.github.humbleui.skija.Canvas;
@@ -13,6 +14,7 @@ import java.io.File;
 import java.util.function.Consumer;
 
 import static app.Colors.APP_BACKGROUND_COLOR;
+import static app.Colors.PANEL_BACKGROUND_COLOR;
 
 /**
  * Класс окна приложения
@@ -33,6 +35,10 @@ public class Application implements Consumer<Event> {
     /**
      * Конструктор окна приложения
      */
+    /**
+     * Первый заголовок
+     */
+    private final Label label;
     public Application() {
         // создаём окно
         window = App.makeWindow();
@@ -45,6 +51,7 @@ public class Application implements Consumer<Event> {
         // задаём его положение
         window.setWindowPosition(100, 100);
         // задаём иконку
+        label = new Label(window, true, PANEL_BACKGROUND_COLOR, PANEL_PADDING, "Привет, мир!");
 
         switch (Platform.CURRENT) {
             case WINDOWS -> window.setIcon(new File("src/main/resources/windows.ico"));
@@ -106,23 +113,11 @@ public class Application implements Consumer<Event> {
         canvas.save();
         // очищаем канвас
         canvas.clear(APP_BACKGROUND_COLOR);
-
+        // рисуем заголовок
+        label.paint(canvas, windowCS);
         // восстанавливаем состояние канваса
         canvas.restore();
-        // координаты левого верхнего края окна
-        int rX = windowCS.getSize().x / 3;
-        int rY = windowCS.getSize().y / 3;
-        // ширина и высота
-        int rWidth =  windowCS.getSize().x  / 3;
-        int rHeight = windowCS.getSize().y  / 3;
-        // создаём кисть
-        Paint paint = new Paint();
-        // задаём цвет рисования
-        paint.setColor(Misc.getColor(100, 255, 255, 255));
-        // рисуем квадрат
-        canvas.drawRRect(RRect.makeXYWH(rX, rY, rWidth, rHeight, 4), paint);
-
-        // восстанавливаем состояние канваса
-        canvas.restore();
+        // рисуем заголовок в точке [100,100] с шириной и выостой 200
+        label.paint(canvas, new CoordinateSystem2i(100, 100, 200, 200));
     }
 }
