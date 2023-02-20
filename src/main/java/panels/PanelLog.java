@@ -1,7 +1,7 @@
 package panels;
 
-import controls.Label;
-import io.github.humbleui.jwm.*;
+import io.github.humbleui.jwm.Event;
+import io.github.humbleui.jwm.Window;
 import io.github.humbleui.skija.Canvas;
 import io.github.humbleui.skija.FontMetrics;
 import io.github.humbleui.skija.Paint;
@@ -14,8 +14,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import static app.Application.PANEL_PADDING;
-import static app.Colors.PANEL_BACKGROUND_COLOR;
 import static app.Fonts.FONT12;
 
 /**
@@ -26,6 +24,10 @@ public class PanelLog extends GridPanel {
      * Кол-во строчек лога
      */
     private static final int LOG_LINES_CNT = 15;
+    /**
+     * Максимальная длина строки лога
+     */
+    private static final int MAX_LOG_LINE_LENGTH = 80;
     /**
      * Список записей лога
      */
@@ -51,6 +53,7 @@ public class PanelLog extends GridPanel {
          */
         SUCCESS
     }
+
     /**
      * Запись
      */
@@ -108,13 +111,12 @@ public class PanelLog extends GridPanel {
      * @param text       текст записи
      */
     public static void addToLog(RecordType recordType, String text) {
-        // перебираем строки, переданные в аргументах
         for (String line : text.split("\n")) {
-            // пока строк больше, чем нужно, удаляем первую
-            while (logs.size() > LOG_LINES_CNT)
-                logs.remove(0);
-            // добавляем новую запись
-            logs.add(new Record(recordType, line, Calendar.getInstance().getTime()));
+            for (String limitedLine : Misc.limit(line, MAX_LOG_LINE_LENGTH)) {
+                while (logs.size() > LOG_LINES_CNT)
+                    logs.remove(0);
+                logs.add(new Record(recordType, limitedLine, Calendar.getInstance().getTime()));
+            }
         }
     }
     /**
