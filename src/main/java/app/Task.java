@@ -137,5 +137,23 @@ public class Task {
                 addPoint(pos, Point.PointSet.SECOND_SET);
         }
     }
+    /**
+     * Очистить задачу
+     */
+    public void clear() {
+        points.clear();
+    }
+    /**
+     * Решить задачу
+     */
+    public void solve() {
+        PanelLog.warning("Вызван метод solve()\n Пока что решения нет");
+    }
+    /**
+     * Отмена решения задачи
+     */
+    public void cancel() {
+
+    }
 
 }
