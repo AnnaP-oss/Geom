@@ -10,7 +10,10 @@ public class Colors {
      * цвет фона
      */
     public static final int APP_BACKGROUND_COLOR = Misc.getColor(255, 38, 70, 83);
-
+    /**
+     * Цвет кнопки
+     */
+    public static final int BUTTON_COLOR = Misc.getColor(80, 0, 0, 0);
     /**
      * Запрещённый конструктор
      */
