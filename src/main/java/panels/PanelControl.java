@@ -198,8 +198,8 @@ public class PanelControl extends GridPanel {
                     button.checkOver(lastWindowCS.getRelativePos(new Vector2i(ee)));
             }
             // событие нажатия мыши
-        } else if (e instanceof EventMouseButton) {
-            if (!lastInside)
+        } else if (e instanceof EventMouseButton ee) {
+            if (!lastInside || !ee.isPressed())
                 return;
 
             Vector2i relPos = lastWindowCS.getRelativePos(lastMove);
@@ -239,6 +239,7 @@ public class PanelControl extends GridPanel {
             window.requestFrame();
         }
     }
+
     /**
      * Метод под рисование в конкретной реализации
      *
@@ -263,6 +264,7 @@ public class PanelControl extends GridPanel {
             label.paint(canvas, windowCS);
         }
     }
+
     /**
      * Сброс решения задачи
      */
