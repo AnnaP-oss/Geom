@@ -86,13 +86,30 @@ public class PanelRendering extends GridPanel {
     public void paintImpl(Canvas canvas, CoordinateSystem2i windowCS) {
         task.paint(canvas, windowCS);
     }
-
+    /**
+     * Загружаем из файла
+     *
+     * @param path путь к файлу
+     */
+    public static void loadFromFile(String path) {
+        // создаём загрузчик JSON
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            // считываем систему координат
+            task = objectMapper.readValue(new File(path), Task.class);
+            PanelLog.success("Файл " + path + " успешно загружен");
+        } catch (IOException e) {
+            PanelLog.error("Не получилось прочитать файл " + path + "\n" + e);
+        }
+    }
 
     /**
      * Загрузить файл
      */
     public static void load() {
-        PanelLog.info("load");
+        String path = "src/main/resources/conf.json";
+        PanelLog.info("load from " + path);
+        loadFromFile(path);
     }
     /**
      * Сохранить файл
