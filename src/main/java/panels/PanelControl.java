@@ -7,6 +7,7 @@ import controls.InputFactory;
 import controls.Label;
 import controls.Button;
 import controls.MultiLineLabel;
+import dialogs.PanelInfo;
 import io.github.humbleui.jwm.Event;
 import io.github.humbleui.jwm.Window;
 import io.github.humbleui.jwm.*;
@@ -185,6 +186,7 @@ public class PanelControl extends GridPanel {
                 String s = "Задача решена\n" +
                         "Пересечений: " + PanelRendering.task.getCrossed().size() / 2 + "\n" +
                         "Отдельных точек: " + PanelRendering.task.getSingle().size();
+                PanelInfo.show(s + "\n\nНажмите Esc, чтобы вернуться");
                 PanelLog.success(s);
                 solve.text = "Сбросить";
             } else {
