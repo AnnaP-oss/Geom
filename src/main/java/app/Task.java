@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 
 import static app.Colors.*;
-
+//test commit
 
 /**
  * Класс задачи
