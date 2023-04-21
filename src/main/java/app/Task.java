@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 
 import static app.Colors.*;
-//test commit
 
 /**
  * Класс задачи
@@ -29,9 +28,11 @@ public class Task {
      */
     public static final String TASK_TEXT = """
             ПОСТАНОВКА ЗАДАЧИ:
-            Заданы два множества точек в вещественном
-            пространстве. Требуется построить пересечение
-            и разность этих множеств""";
+            Дано множество точек на плоскости. Определить среди
+            них подмножество точек наибольшего размера такое,
+            что каждая точка этого множества является вершиной
+            хотя бы двух равносторонних треугольников, вершины
+            которого принадлежат этому подмножеству.""";
     /**
      * коэффициент колёсика мыши
      */
@@ -50,19 +51,6 @@ public class Task {
      */
     @JsonIgnore
     private boolean solved;
-    /**
-     * Список точек в пересечении
-     */
-    @Getter
-    @JsonIgnore
-    private final ArrayList<Point> crossed;
-    /**
-     * Список точек в разности
-     */
-    @Getter
-    @JsonIgnore
-    private final ArrayList<Point> single;
-
     /**
      * Список точек
      */
@@ -91,8 +79,6 @@ public class Task {
     ) {
         this.ownCS = ownCS;
         this.points = points;
-        this.crossed = new ArrayList<>();
-        this.single = new ArrayList<>();
     }
 
     /**
@@ -120,14 +106,7 @@ public class Task {
         // создаём перо
         try (var paint = new Paint()) {
             for (Point p : points) {
-                if (!solved) {
-                    paint.setColor(p.getColor());
-                } else {
-                    if (crossed.contains(p))
-                        paint.setColor(CROSSED_COLOR);
-                    else
-                        paint.setColor(SUBTRACTED_COLOR);
-                }
+                paint.setColor(SUBTRACTED_COLOR);
                 // y-координату разворачиваем, потому что у СК окна ось y направлена вниз,
                 // а в классическом представлении - вверх
                 Vector2i windowPos = windowCS.getCoords(p.pos.x, p.pos.y, ownCS);
@@ -142,13 +121,12 @@ public class Task {
      * Добавить точку
      *
      * @param pos      положение
-     * @param pointSet множество
      */
-    public void addPoint(Vector2d pos, Point.PointSet pointSet) {
+    public void addPoint(Vector2d pos) {
         solved = false;
-        Point newPoint = new Point(pos, pointSet);
+        Point newPoint = new Point(pos);
         points.add(newPoint);
-        PanelLog.info("точка " + newPoint + " добавлена в " + newPoint.getSetName());
+        PanelLog.info("точка " + newPoint + " добавлена");
     }
 
     /**
@@ -163,10 +141,8 @@ public class Task {
         Vector2d taskPos = ownCS.getCoords(pos, lastWindowCS);
         // если левая кнопка мыши, добавляем в первое множество
         if (mouseButton.equals(MouseButton.PRIMARY)) {
-            addPoint(taskPos, Point.PointSet.FIRST_SET);
+            addPoint(taskPos);
             // если правая, то во второе
-        } else if (mouseButton.equals(MouseButton.SECONDARY)) {
-            addPoint(taskPos, Point.PointSet.SECOND_SET);
         }
     }
 
@@ -191,11 +167,7 @@ public class Task {
             Vector2i gridPos = addGrid.getRandomCoords();
             // получаем координаты в СК задачи
             Vector2d pos = ownCS.getCoords(gridPos, addGrid);
-            // сработает примерно в половине случаев
-            if (ThreadLocalRandom.current().nextBoolean())
-                addPoint(pos, Point.PointSet.FIRST_SET);
-            else
-                addPoint(pos, Point.PointSet.SECOND_SET);
+            addPoint(pos);
         }
     }
     /**
@@ -248,31 +220,6 @@ public class Task {
      * Решить задачу
      */
     public void solve() {
-        // очищаем списки
-        crossed.clear();
-        single.clear();
-
-        // перебираем пары точек
-        for (int i = 0; i < points.size(); i++) {
-            for (int j = i + 1; j < points.size(); j++) {
-                // сохраняем точки
-                Point a = points.get(i);
-                Point b = points.get(j);
-                // если точки совпадают по положению
-                if (a.pos.equals(b.pos) && !a.pointSet.equals(b.pointSet)) {
-                    if (!crossed.contains(a)) {
-                        crossed.add(a);
-                        crossed.add(b);
-                    }
-                }
-            }
-        }
-
-        /// добавляем вс
-        for (Point point : points)
-            if (!crossed.contains(point))
-                single.add(point);
-
         // задача решена
         solved = true;
     }

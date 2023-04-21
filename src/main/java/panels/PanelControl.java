@@ -78,6 +78,9 @@ public class PanelControl extends GridPanel {
                 6, 7, 0, 0, 6, 2, Task.TASK_TEXT,
                 false, true);
         // добавление вручную
+        Label xLabel = new Label(window, false, backgroundColor, PANEL_PADDING,
+                6, 7, 0, 2, 1, 1, "X", true, true);
+        labels.add(xLabel);
         Input xField = InputFactory.getInput(window, false, FIELD_BACKGROUND_COLOR, PANEL_PADDING,
                 6, 7, 1, 2, 2, 1, "0.0", true,
                 FIELD_TEXT_COLOR, true);
@@ -91,11 +94,11 @@ public class PanelControl extends GridPanel {
         inputs.add(yField);
 
 
-        Button addToFirstSet = new Button(
+        Button addPoint = new Button(
                 window, false, backgroundColor, PANEL_PADDING,
-                6, 7, 0, 3, 3, 1, "Добавить в первое\nмножество",
+                6, 7, 0, 3, 6, 1, "Добавить точку",
                 true, true);
-        addToFirstSet.setOnClick(() -> {
+        addPoint.setOnClick(() -> {
             // если числа введены верно
             if (!xField.hasValidDoubleValue()) {
                 PanelLog.warning("X координата введена неверно");
@@ -103,28 +106,9 @@ public class PanelControl extends GridPanel {
                 PanelLog.warning("Y координата введена неверно");
             else
                 PanelRendering.task.addPoint(
-                        new Vector2d(xField.doubleValue(), yField.doubleValue()), Point.PointSet.FIRST_SET
-                );
+                        new Vector2d(xField.doubleValue(), yField.doubleValue()));
         });
-        buttons.add(addToFirstSet);
-
-        Button addToSecondSet = new Button(
-                window, false, backgroundColor, PANEL_PADDING,
-                6, 7, 3, 3, 3, 1, "Добавить во второе\nмножество",
-                true, true);
-        addToSecondSet.setOnClick(() -> {
-            // если числа введены верно
-            if (!xField.hasValidDoubleValue()) {
-                PanelLog.warning("X координата введена неверно");
-            } else if (!yField.hasValidDoubleValue())
-                PanelLog.warning("Y координата введена неверно");
-            else {
-                PanelRendering.task.addPoint(
-                        new Vector2d(xField.doubleValue(), yField.doubleValue()), Point.PointSet.SECOND_SET
-                );
-            }
-        });
-        buttons.add(addToSecondSet);
+        buttons.add(addPoint);
         // случайное добавление
         Label cntLabel = new Label(window, false, backgroundColor, PANEL_PADDING,
                 6, 7, 0, 4, 1, 1, "Кол-во", true, true);
@@ -183,9 +167,7 @@ public class PanelControl extends GridPanel {
         solve.setOnClick(() -> {
             if (!PanelRendering.task.isSolved()) {
                 PanelRendering.task.solve();
-                String s = "Задача решена\n" +
-                        "Пересечений: " + PanelRendering.task.getCrossed().size() / 2 + "\n" +
-                        "Отдельных точек: " + PanelRendering.task.getSingle().size();
+                String s = "Задача решена\n";
                 PanelInfo.show(s + "\n\nНажмите Esc, чтобы вернуться");
                 PanelLog.success(s);
                 solve.text = "Сбросить";
