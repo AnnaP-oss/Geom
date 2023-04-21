@@ -113,6 +113,36 @@ public class Task {
                 Vector2i windowPos = windowCS.getCoords(p.pos.x, p.pos.y, ownCS);
                 // рисуем точку
                 canvas.drawRect(Rect.makeXYWH(windowPos.x - POINT_SIZE, windowPos.y - POINT_SIZE, POINT_SIZE * 2, POINT_SIZE * 2), paint);
+                if (solved) {
+                    paint.setColor(TRIANGLE_COLOR);
+                    for (Triangle t : triangles){
+                        //пересчитываем вершины треугольника и по ним рисуем его стороны
+                        Vector2i windowPosPointA = windowCS.getCoords(t.pointA.pos.x, t.pointA.pos.y, ownCS);
+                        Vector2i windowPosPointB = windowCS.getCoords(t.pointB.pos.x, t.pointB.pos.y, ownCS);
+                        Vector2i windowPosPointC = windowCS.getCoords(t.pointC.pos.x, t.pointC.pos.y, ownCS);
+                        canvas.drawLine(windowPosPointA.x, windowPosPointA.y, windowPosPointB.x, windowPosPointB.y, paint);
+                        canvas.drawLine(windowPosPointA.x, windowPosPointA.y, windowPosPointC.x, windowPosPointC.y, paint);
+                        canvas.drawLine(windowPosPointC.x, windowPosPointC.y, windowPosPointB.x, windowPosPointB.y, paint);
+                    }
+                    paint.setColor(SUBTRACTED_COLOR);
+                    for (Point point : maxset){
+                        //точки из искомого множества
+                        Vector2i windowPos1 = windowCS.getCoords(point.pos.x, point.pos.y, ownCS);
+                        canvas.drawRect(Rect.makeXYWH(windowPos1.x - POINT_SIZE, windowPos1.y - POINT_SIZE, POINT_SIZE * 2, POINT_SIZE * 2), paint);
+                    }
+                    paint.setColor(ANSWER_TRIANGLE_COLOR);
+                    for (Triangle t : triangles){
+                        if (maxset.contains(t.pointA) && maxset.contains(t.pointB) && maxset.contains(t.pointC)) {
+                            //если все три вершины содержатся в искомом множестве, то рисуем по ним треугольник
+                            Vector2i windowPosPointA = windowCS.getCoords(t.pointA.pos.x, t.pointA.pos.y, ownCS);
+                            Vector2i windowPosPointB = windowCS.getCoords(t.pointB.pos.x, t.pointB.pos.y, ownCS);
+                            Vector2i windowPosPointC = windowCS.getCoords(t.pointC.pos.x, t.pointC.pos.y, ownCS);
+                            canvas.drawLine(windowPosPointA.x, windowPosPointA.y, windowPosPointB.x, windowPosPointB.y, paint);
+                            canvas.drawLine(windowPosPointA.x, windowPosPointA.y, windowPosPointC.x, windowPosPointC.y, paint);
+                            canvas.drawLine(windowPosPointC.x, windowPosPointC.y, windowPosPointB.x, windowPosPointB.y, paint);
+                        }
+                    }
+                }
             }
         }
         canvas.restore();
@@ -128,7 +158,7 @@ public class Task {
         Point newPoint = new Point(pos);
         points.add(newPoint);
         PanelLog.info("точка " + newPoint + " добавлена");
-    } //добавление мышью уже реализовано
+    }
     /**
      * Клик мыши по пространству задачи
      *
@@ -215,12 +245,105 @@ public class Task {
         points.clear();
         solved = false;
     }
-
+    /**
+     * Наибольшее множество
+     */
+    @Getter
+    @JsonIgnore
+    private ArrayList<Point> maxset = new ArrayList<>();
     /**
      * Решить задачу
      */
     public void solve() {
-        // задача решена
+        //очищаем списки
+        triangles.clear();
+        maxset.clear();
+        //избавляемся от совпадающих точек
+        for (int i = 0; i < points.size(); i++) {
+            for (int j = i + 1; j < points.size(); j++) {
+                if (points.get(i).equals(points.get(j))) {
+                    points.remove(j);
+                }
+            }
+        }
+        //обнуляем счетчик треугольников у каждой точки
+        for (Point point : points) {
+            point.count = 0;
+        }
+        //матрица смежности (соединены ли точки стороной треугольника)
+        int[][] matrix = new int[points.size()][points.size()];
+        //перебираем все точки
+        for (int i = 0; i < points.size(); i++) {
+            for (int j = i + 1; j < points.size(); j++) {
+                for (int k = j + 1; k < points.size(); k++) {
+                    //рисуем треугольник по трем точкам
+                    Triangle t = new Triangle(points.get(i), points.get(j), points.get(k));
+                    //если правильный - увеличиваем счетчик и значение в матрице смежности
+                    if (t.isRight()) {
+                        triangles.add(t);
+                        matrix[i][j]++;
+                        matrix[j][i]++;
+                        matrix[i][k]++;
+                        matrix[k][i]++;
+                        matrix[j][k]++;
+                        matrix[k][j]++;
+                        points.get(i).count++;
+                        points.get(j).count++;
+                        points.get(k).count++;
+                    }
+                }
+            }
+        }
+        //отбрасываем точки, являющиеся вершиной только одного треугольника
+        //эти точки не войдут в финальное множество, а треугольник, построенный
+        //на этой точке не удовлетворяет условию, значит понижаем счетчик двух оставшихся вершин
+        boolean flag = true;
+        while (flag) {
+            flag = false;
+            for (int i = 0; i < points.size(); i++) {
+                if (points.get(i).count == 1) {
+                    points.get(i).count--;
+                    for (int j = 0; j < points.size(); j++) {
+                        if (matrix[i][j] > 0) {
+                            points.get(j).count--;
+                        }
+                    }
+                }
+            }
+            //пока не останутся точки либо из множеств (count>=2), либо остальные
+            for (Point point : points) {
+                if (point.count == 1) {
+                    flag = true;
+                    break;
+                }
+            }
+        }
+        //заново перебираем все точки
+        for (int i = 0; i < points.size(); i++) {
+            if (points.get(i).count >= 2) {
+                //если есть два треугольника из условия, создаем подмножество точек
+                ArrayList<Point> set = new ArrayList<>();
+                set.add(points.get(i));
+                //перебираем все связанные с ней точки по матрице и добавляем их в подмножество
+                for (int j = 0; j < points.size(); j++) {
+                    if ((matrix[i][j] > 0)  && (points.get(j).count >= 2)){
+                        set.add(points.get(j));
+                    }
+                }
+                //перебираем все точки подмножества, новые добавляем в конец списка
+                //перебираем, пока не дойдем до конца подмножества
+                for (int j = 0; j < set.size(); j++) {
+                    for (int k = 0; k < points.size(); k++) {
+                        if ((matrix[points.indexOf(set.get(j))][k] > 0) && (points.get(k).count >= 2))
+                            if (!set.contains(points.get(k)))
+                                set.add(points.get(k));
+                    }
+                }
+                //сравниваем с максимумом
+                if (set.size() > maxset.size())
+                    maxset = set;
+            }
+        }
         solved = true;
     }
 

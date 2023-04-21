@@ -84,4 +84,12 @@ public class Colors {
      * цвет подложки панелей
      */
     public static final int PANEL_BACKGROUND_COLOR = Misc.getColor(32, 0, 0, 0);
+    /**
+     * цвет правильных треугольников
+     */
+    public static final int TRIANGLE_COLOR = Misc.getColor(20, 200, 200, 200);
+    /**
+     * цвет правильных треугольников из искомого множества
+     */
+    public static final int ANSWER_TRIANGLE_COLOR = Misc.getColor(255, 0, 255, 0);
 }

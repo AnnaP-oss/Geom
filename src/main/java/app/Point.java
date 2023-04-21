@@ -3,7 +3,6 @@ package app;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import misc.Misc;
 import misc.Vector2d;
 
 import java.util.Objects;
@@ -17,7 +16,10 @@ public class Point {
      * Координаты точки
      */
     public final Vector2d pos;
-
+    /**
+     * Счетчик правильных треугольников с вершиной в этой точке
+     */
+    public int count;
     /**
      * Конструктор точки
      * @param pos     положение точки

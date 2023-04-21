@@ -1,6 +1,5 @@
 package panels;
 
-import app.Point;
 import app.Task;
 import controls.Input;
 import controls.InputFactory;
@@ -167,7 +166,8 @@ public class PanelControl extends GridPanel {
         solve.setOnClick(() -> {
             if (!PanelRendering.task.isSolved()) {
                 PanelRendering.task.solve();
-                String s = "Задача решена\n";
+                String s = "Задача решена\n" +
+                        "Точек в самом большом подмножестве: " + PanelRendering.task.getMaxset().size();
                 PanelInfo.show(s + "\n\nНажмите Esc, чтобы вернуться");
                 PanelLog.success(s);
                 solve.text = "Сбросить";
