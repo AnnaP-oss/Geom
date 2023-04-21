@@ -7,15 +7,10 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import io.github.humbleui.jwm.MouseButton;
 import io.github.humbleui.skija.*;
 import lombok.Getter;
-import misc.CoordinateSystem2d;
-import misc.CoordinateSystem2i;
-import misc.Vector2d;
-import misc.Vector2i;
+import misc.*;
 import panels.PanelLog;
 
 import java.util.ArrayList;
-import java.util.concurrent.ThreadLocalRandom;
-
 import static app.Colors.*;
 
 /**
@@ -112,7 +107,7 @@ public class Task {
         // создаём перо
         try (var paint = new Paint()) {
             for (Point p : points) {
-                paint.setColor(SUBTRACTED_COLOR);
+                paint.setColor(CROSSED_COLOR);
                 // y-координату разворачиваем, потому что у СК окна ось y направлена вниз,
                 // а в классическом представлении - вверх
                 Vector2i windowPos = windowCS.getCoords(p.pos.x, p.pos.y, ownCS);
