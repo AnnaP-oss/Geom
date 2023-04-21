@@ -128,8 +128,7 @@ public class Task {
         Point newPoint = new Point(pos);
         points.add(newPoint);
         PanelLog.info("точка " + newPoint + " добавлена");
-    }
-
+    } //добавление мышью уже реализовано
     /**
      * Клик мыши по пространству задачи
      *
