@@ -20,7 +20,6 @@ public class Point {
 
     /**
      * Конструктор точки
-     *
      * @param pos     положение точки
      */
     @JsonCreator

@@ -57,6 +57,11 @@ public class Task {
     @Getter
     private final ArrayList<Point> points;
     /**
+     * Список треугольников
+     */
+    @JsonIgnore
+    private final ArrayList<Triangle> triangles;
+    /**
      * Размер точки
      */
     private static final int POINT_SIZE = 3;
@@ -79,6 +84,7 @@ public class Task {
     ) {
         this.ownCS = ownCS;
         this.points = points;
+        this.triangles = new ArrayList<>();
     }
 
     /**
