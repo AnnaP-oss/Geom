@@ -54,6 +54,7 @@ public class Task {
     /**
      * Список треугольников
      */
+    @Getter
     @JsonIgnore
     private final ArrayList<Triangle> triangles;
     /**

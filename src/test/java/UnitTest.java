@@ -1,68 +1,32 @@
 import app.Point;
 import app.Task;
+import app.Triangle;
 import misc.CoordinateSystem2d;
 import misc.Vector2d;
 import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Класс тестирования
  */
 public class UnitTest {
-
-    /**
-     * Тест
-     *
-     * @param points        список точек
-     * @param crossedCoords мн-во пересечений
-     * @param singleCoords  мн-во разности
-     */
-    /*private static void test(ArrayList<Point> points, Set<Vector2d> crossedCoords, Set<Vector2d> singleCoords) {
-        Task task = new Task(new CoordinateSystem2d(10, 10, 20, 20), points);
-        task.solve();
-        // проверяем, что координат пересечения в два раза меньше, чем точек
-        assert crossedCoords.size() == task.getCrossed().size() / 2;
-        // проверяем, что координат разности столько же, сколько точек
-        assert singleCoords.size() == task.getSingle().size();
-
-        // проверяем, что все координаты всех точек пересечения содержатся в множестве координат
-        for (Point p : task.getCrossed()) {
-            assert crossedCoords.contains(p.getPos());
-        }
-
-        // проверяем, что все координаты всех точек разности содержатся в множестве координат
-        for (Point p : task.getSingle()) {
-            assert singleCoords.contains(p.getPos());
-        }
-    }
-*/
-
     /**
      * Первый тест
      */
     @Test
     public void test1() {
-        /*ArrayList<Point> points = new ArrayList<>();
-
-        points.add(new Point(new Vector2d(1, 1), Point.PointSet.FIRST_SET));
-        points.add(new Point(new Vector2d(-1, 1), Point.PointSet.FIRST_SET));
-        points.add(new Point(new Vector2d(-1, 1), Point.PointSet.SECOND_SET));
-        points.add(new Point(new Vector2d(2, 1), Point.PointSet.FIRST_SET));
-        points.add(new Point(new Vector2d(1, 2), Point.PointSet.SECOND_SET));
-        points.add(new Point(new Vector2d(1, 2), Point.PointSet.FIRST_SET));
-
-        Set<Vector2d> crossedCoords = new HashSet<>();
-        crossedCoords.add(new Vector2d(1, 2));
-        crossedCoords.add(new Vector2d(-1, 1));
-
-        Set<Vector2d> singleCoords = new HashSet<>();
-        singleCoords.add(new Vector2d(1, 1));
-        singleCoords.add(new Vector2d(2, 1));
-
-        test(points, crossedCoords, singleCoords);*/
+        //правильный треугольник со стороной 5
+        Triangle right = new Triangle(new Point(new Vector2d(0.0,0.0)),
+                new Point(new Vector2d(5.0, 0.0)),
+                new Point(new Vector2d(2.5, Math.sqrt(5.0*5.0-2.5*2.5))));
+        //треугольник со сторонами 5 и не 5
+        Triangle notright = new Triangle(new Point(new Vector2d(0.0,0.0)),
+                new Point(new Vector2d(5.0, 0.0)),
+                new Point(new Vector2d(2.5, Math.sqrt(6.0))));
+        //проверка равносторонности
+        assert right.isRight();
+        assert !notright.isRight();
     }
 
     /**
@@ -70,22 +34,17 @@ public class UnitTest {
      */
     @Test
     public void test2() {
-        /*ArrayList<Point> points = new ArrayList<>();
-
-        points.add(new Point(new Vector2d(1, 1), Point.PointSet.FIRST_SET));
-        points.add(new Point(new Vector2d(2, 1), Point.PointSet.FIRST_SET));
-        points.add(new Point(new Vector2d(2, 2), Point.PointSet.FIRST_SET));
-        points.add(new Point(new Vector2d(1, 2), Point.PointSet.FIRST_SET));
-
-        Set<Vector2d> crossedCoords = new HashSet<>();
-
-        Set<Vector2d> singleCoords = new HashSet<>();
-        singleCoords.add(new Vector2d(1, 1));
-        singleCoords.add(new Vector2d(2, 1));
-        singleCoords.add(new Vector2d(2, 2));
-        singleCoords.add(new Vector2d(1, 2));
-
-        test(points, crossedCoords, singleCoords);*/
+        ArrayList<Point> points = new ArrayList<>();
+        points.add(new Point(new Vector2d(0.0,0.0)));
+        points.add(new Point(new Vector2d(5.0,0.0)));
+        points.add(new Point(new Vector2d(-6.05,9.25)));
+        points.add(new Point(new Vector2d(-1.0,-1.0)));
+        points.add(new Point(new Vector2d(-6.05,9.0)));
+        //ни одна из точек не является вершиной равностороннего прямоугольника
+        Task task = new Task(new CoordinateSystem2d(10, 10, 20, 20), points);
+        task.solve();
+        assert task.getTriangles().size() == 0;
+        assert task.getMaxset().size() == 0;
     }
 
     /**
@@ -93,21 +52,59 @@ public class UnitTest {
      */
     @Test
     public void test3() {
-       /* ArrayList<Point> points = new ArrayList<>();
-
-        points.add(new Point(new Vector2d(1, 1), Point.PointSet.FIRST_SET));
-        points.add(new Point(new Vector2d(2, 1), Point.PointSet.SECOND_SET));
-        points.add(new Point(new Vector2d(2, 2), Point.PointSet.SECOND_SET));
-        points.add(new Point(new Vector2d(1, 2), Point.PointSet.FIRST_SET));
-
-        Set<Vector2d> crossedCoords = new HashSet<>();
-
-        Set<Vector2d> singleCoords = new HashSet<>();
-        singleCoords.add(new Vector2d(1, 1));
-        singleCoords.add(new Vector2d(2, 1));
-        singleCoords.add(new Vector2d(2, 2));
-        singleCoords.add(new Vector2d(1, 2));
-
-        test(points, crossedCoords, singleCoords);*/
+        ArrayList<Point> points = new ArrayList<>();
+        points.add(new Point(new Vector2d(0.0,0.0)));
+        points.add(new Point(new Vector2d(5.0,0.0)));
+        points.add(new Point(new Vector2d(2.5,Math.sqrt(5.0*5.0-2.5*2.5))));
+        points.add(new Point(new Vector2d(-1.0,-1.0)));
+        points.add(new Point(new Vector2d(-6.05,9.0)));
+        //есть один правильный треугольник
+        Task task = new Task(new CoordinateSystem2d(10, 10, 20, 20), points);
+        task.solve();
+        assert task.getTriangles().size() == 1;
+        assert task.getMaxset().size() == 0;
+    }
+    /**
+     * Четвертый тест
+     */
+    @Test
+    public void test4() {
+        ArrayList<Point> points = new ArrayList<>();
+        //6 точек в множестве
+        points.add(new Point(new Vector2d(0.0,0.0)));
+        points.add(new Point(new Vector2d(5.0,0.0)));
+        points.add(new Point(new Vector2d(2.5,Math.sqrt(5.0*5.0-2.5*2.5))));
+        points.add(new Point(new Vector2d(7.5,Math.sqrt(5.0*5.0-2.5*2.5))));
+        points.add(new Point(new Vector2d(2.5,-Math.sqrt(5.0*5.0-2.5*2.5))));
+        points.add(new Point(new Vector2d(7.5,-Math.sqrt(5.0*5.0-2.5*2.5))));
+        //лишние точки
+        points.add(new Point(new Vector2d(-8.0,Math.sqrt(5.0*5.0-2.5*2.5))));
+        points.add(new Point(new Vector2d(6.0,6.0)));
+        points.add(new Point(new Vector2d(-7.77,6.66)));
+        //есть искомое множество и неподходящие точки
+        Task task = new Task(new CoordinateSystem2d(10, 10, 20, 20), points);
+        task.solve();
+        assert task.getMaxset().size() == 6;
+    }
+    /**
+     * Пятый тест
+     */
+    @Test
+    public void test5() {
+        ArrayList<Point> points = new ArrayList<>();
+        //все точки в множестве
+        points.add(new Point(new Vector2d(0.0,0.0)));
+        points.add(new Point(new Vector2d(5.0,0.0)));
+        points.add(new Point(new Vector2d(2.5,Math.sqrt(5.0*5.0-2.5*2.5))));
+        points.add(new Point(new Vector2d(7.5,Math.sqrt(5.0*5.0-2.5*2.5))));
+        points.add(new Point(new Vector2d(2.5,-Math.sqrt(5.0*5.0-2.5*2.5))));
+        points.add(new Point(new Vector2d(7.5,-Math.sqrt(5.0*5.0-2.5*2.5))));
+        points.add(new Point(new Vector2d(10.0,0.0)));
+        Task task = new Task(new CoordinateSystem2d(10, 10, 20, 20), points);
+        task.solve();
+        for (Point point : points) {
+            assert point.count >= 2;
+        }
+        assert task.getMaxset().size() == 7;
     }
 }
